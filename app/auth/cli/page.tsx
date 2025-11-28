@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle, XCircle, Terminal, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function CLIAuthPage() {
+function CLIAuthContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session");
   const [status, setStatus] = useState<"loading" | "success" | "error" | "no-session">("loading");
@@ -19,6 +19,7 @@ export default function CLIAuthPage() {
 
     // Complete the auth session
     completeAuth();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
   async function completeAuth() {
@@ -104,5 +105,24 @@ export default function CLIAuthPage() {
         <Button onClick={() => window.close()}>Close Window</Button>
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="text-center max-w-md px-4">
+        <Loader2 className="h-16 w-16 mx-auto mb-6 text-primary animate-spin" />
+        <h1 className="text-2xl font-bold mb-2">Loading...</h1>
+      </div>
+    </div>
+  );
+}
+
+export default function CLIAuthPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <CLIAuthContent />
+    </Suspense>
   );
 }

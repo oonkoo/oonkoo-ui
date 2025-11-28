@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const user = await getCurrentUser();
 
     if (!user) {
-      return Errors.UNAUTHORIZED("Please sign in to authenticate the CLI");
+      return Errors.UNAUTHORIZED();
     }
 
     // Find the session

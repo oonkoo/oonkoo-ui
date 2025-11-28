@@ -15,21 +15,21 @@ export async function POST(req: NextRequest) {
     const authHeader = req.headers.get("Authorization");
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return Errors.UNAUTHORIZED("Missing or invalid Authorization header");
+      return Errors.UNAUTHORIZED();
     }
 
     const token = authHeader.replace("Bearer ", "");
 
     // Validate token format (API key or CLI token)
     if (!isValidAuthToken(token)) {
-      return Errors.UNAUTHORIZED("Invalid token format");
+      return Errors.UNAUTHORIZED();
     }
 
     // Validate the token and get user
     const user = await ApiKeyService.validateKey(token);
 
     if (!user) {
-      return Errors.UNAUTHORIZED("Invalid or expired token");
+      return Errors.UNAUTHORIZED();
     }
 
     // Return user info
