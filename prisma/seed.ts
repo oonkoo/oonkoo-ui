@@ -533,6 +533,868 @@ export function FooterSimple() {
       status: ComponentStatus.PUBLISHED,
       featured: false,
     },
+    // ========== HIGH QUALITY FREE COMPONENTS ==========
+    {
+      name: 'Aurora Background',
+      slug: 'aurora-background',
+      description: 'A mesmerizing animated aurora borealis background effect. Creates a stunning visual experience with flowing gradients.',
+      code: `"use client";
+
+import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
+
+interface AuroraBackgroundProps {
+  children?: React.ReactNode;
+  className?: string;
+  showRadialGradient?: boolean;
+}
+
+export function AuroraBackground({
+  children,
+  className,
+  showRadialGradient = true,
+}: AuroraBackgroundProps) {
+  return (
+    <div
+      className={cn(
+        "relative flex flex-col min-h-screen items-center justify-center bg-zinc-950 text-slate-50 transition-bg overflow-hidden",
+        className
+      )}
+    >
+      <div className="absolute inset-0 overflow-hidden">
+        <div
+          className={cn(
+            \`
+            [--aurora:repeating-linear-gradient(100deg,var(--primary)_10%,var(--secondary)_15%,var(--primary)_20%,var(--accent)_25%,var(--primary)_30%)]
+            [background-image:var(--aurora)]
+            [background-size:300%,_200%]
+            [background-position:50%_50%,50%_50%]
+            filter blur-[10px]
+            after:content-[""] after:absolute after:inset-0 after:[background-image:var(--aurora)]
+            after:[background-size:200%,_100%]
+            after:animate-aurora after:[background-attachment:fixed] after:mix-blend-difference
+            pointer-events-none
+            absolute -inset-[10px] opacity-50
+            will-change-transform
+            \`,
+            showRadialGradient &&
+              \`[mask-image:radial-gradient(ellipse_at_100%_0%,black_10%,transparent_70%)]\`
+          )}
+          style={{
+            "--primary": "hsl(280, 100%, 70%)",
+            "--secondary": "hsl(200, 100%, 60%)",
+            "--accent": "hsl(340, 100%, 70%)",
+          } as React.CSSProperties}
+        />
+      </div>
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
+}
+
+// Usage Example:
+// <AuroraBackground>
+//   <h1 className="text-4xl md:text-7xl font-bold text-center">
+//     Aurora Background
+//   </h1>
+// </AuroraBackground>`,
+      type: ComponentType.BLOCK,
+      tier: ComponentTier.FREE,
+      category: ComponentCategory.HERO,
+      tags: ['aurora', 'background', 'animated', 'gradient', 'hero', 'visual'],
+      dependencies: JSON.stringify([]),
+      registryDeps: [],
+      status: ComponentStatus.PUBLISHED,
+      featured: true,
+    },
+    {
+      name: 'Spotlight Card',
+      slug: 'spotlight-card',
+      description: 'An interactive card component with a spotlight effect that follows the cursor. Creates an engaging hover experience.',
+      code: `"use client";
+
+import { useRef, useState, useCallback } from "react";
+import { cn } from "@/lib/utils";
+
+interface SpotlightCardProps {
+  children: React.ReactNode;
+  className?: string;
+  spotlightColor?: string;
+}
+
+export function SpotlightCard({
+  children,
+  className,
+  spotlightColor = "rgba(120, 119, 198, 0.15)",
+}: SpotlightCardProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [opacity, setOpacity] = useState(0);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    setPosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  }, []);
+
+  const handleMouseEnter = useCallback(() => {
+    setOpacity(1);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setOpacity(0);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={cn(
+        "relative overflow-hidden rounded-xl border bg-card p-8",
+        className
+      )}
+    >
+      <div
+        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300"
+        style={{
+          opacity,
+          background: \`radial-gradient(600px circle at \${position.x}px \${position.y}px, \${spotlightColor}, transparent 40%)\`,
+        }}
+      />
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
+}
+
+// Usage Example:
+// <SpotlightCard>
+//   <h3 className="text-xl font-semibold mb-2">Interactive Card</h3>
+//   <p className="text-muted-foreground">
+//     Hover over this card to see the spotlight effect follow your cursor.
+//   </p>
+// </SpotlightCard>`,
+      type: ComponentType.ELEMENT,
+      tier: ComponentTier.FREE,
+      category: ComponentCategory.OTHER,
+      tags: ['card', 'spotlight', 'hover', 'interactive', 'cursor'],
+      dependencies: JSON.stringify([]),
+      registryDeps: [],
+      status: ComponentStatus.PUBLISHED,
+      featured: true,
+    },
+    {
+      name: 'Magnetic Button',
+      slug: 'magnetic-button',
+      description: 'A button with a magnetic cursor-following effect. The button subtly moves toward the cursor creating an engaging interaction.',
+      code: `"use client";
+
+import { useRef, useState, useCallback } from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+interface MagneticButtonProps {
+  children: React.ReactNode;
+  className?: string;
+  strength?: number;
+}
+
+export function MagneticButton({
+  children,
+  className,
+  strength = 40,
+}: MagneticButtonProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouse = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!ref.current) return;
+
+      const rect = ref.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const distanceX = e.clientX - centerX;
+      const distanceY = e.clientY - centerY;
+
+      setPosition({
+        x: distanceX / strength,
+        y: distanceY / strength,
+      });
+    },
+    [strength]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    setPosition({ x: 0, y: 0 });
+  }, []);
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={handleMouseLeave}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: "spring", stiffness: 350, damping: 15, mass: 0.5 }}
+      className={cn("relative inline-block", className)}
+    >
+      <motion.button
+        className={cn(
+          "relative px-8 py-3 rounded-full bg-primary text-primary-foreground font-medium",
+          "hover:bg-primary/90 transition-colors",
+          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        )}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        {children}
+      </motion.button>
+    </motion.div>
+  );
+}
+
+// Usage Example:
+// <MagneticButton strength={30}>
+//   Hover Me
+// </MagneticButton>`,
+      type: ComponentType.ELEMENT,
+      tier: ComponentTier.FREE,
+      category: ComponentCategory.OTHER,
+      tags: ['button', 'magnetic', 'hover', 'interactive', 'cursor', 'animation'],
+      dependencies: JSON.stringify(['framer-motion']),
+      registryDeps: [],
+      status: ComponentStatus.PUBLISHED,
+      featured: true,
+    },
+    {
+      name: 'Text Scramble',
+      slug: 'text-scramble',
+      description: 'An animated text effect that scrambles through random characters before revealing the final text. Great for headlines and intros.',
+      code: `"use client";
+
+import { useEffect, useState, useCallback } from "react";
+import { cn } from "@/lib/utils";
+
+interface TextScrambleProps {
+  text: string;
+  className?: string;
+  speed?: number;
+  characters?: string;
+  trigger?: boolean;
+}
+
+export function TextScramble({
+  text,
+  className,
+  speed = 50,
+  characters = "!<>-_\\\\/[]{}—=+*^?#________",
+  trigger = true,
+}: TextScrambleProps) {
+  const [displayText, setDisplayText] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const scramble = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+
+    let iteration = 0;
+    const maxIterations = text.length;
+
+    const interval = setInterval(() => {
+      setDisplayText(
+        text
+          .split("")
+          .map((char, index) => {
+            if (index < iteration) {
+              return char;
+            }
+            if (char === " ") return " ";
+            return characters[Math.floor(Math.random() * characters.length)];
+          })
+          .join("")
+      );
+
+      iteration += 1 / 3;
+
+      if (iteration >= maxIterations) {
+        clearInterval(interval);
+        setDisplayText(text);
+        setIsAnimating(false);
+      }
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [text, speed, characters, isAnimating]);
+
+  useEffect(() => {
+    if (trigger) {
+      scramble();
+    }
+  }, [trigger, scramble]);
+
+  return (
+    <span
+      className={cn("font-mono inline-block", className)}
+      onMouseEnter={scramble}
+    >
+      {displayText || text}
+    </span>
+  );
+}
+
+// Usage Example:
+// <TextScramble
+//   text="Hover to Scramble"
+//   className="text-4xl font-bold"
+// />`,
+      type: ComponentType.ELEMENT,
+      tier: ComponentTier.FREE,
+      category: ComponentCategory.OTHER,
+      tags: ['text', 'scramble', 'animation', 'effect', 'typography', 'hover'],
+      dependencies: JSON.stringify([]),
+      registryDeps: [],
+      status: ComponentStatus.PUBLISHED,
+      featured: true,
+    },
+    {
+      name: 'Gradient Mesh',
+      slug: 'gradient-mesh',
+      description: 'A beautiful animated gradient mesh background with smooth color transitions. Perfect for hero sections and modern designs.',
+      code: `"use client";
+
+import { cn } from "@/lib/utils";
+
+interface GradientMeshProps {
+  children?: React.ReactNode;
+  className?: string;
+  colors?: string[];
+}
+
+export function GradientMesh({
+  children,
+  className,
+  colors = ["#ff0080", "#7928ca", "#0070f3", "#00d4ff"],
+}: GradientMeshProps) {
+  return (
+    <div
+      className={cn(
+        "relative min-h-screen overflow-hidden bg-zinc-950",
+        className
+      )}
+    >
+      {/* Animated gradient blobs */}
+      <div className="absolute inset-0">
+        <div
+          className="absolute top-0 -left-4 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"
+          style={{ backgroundColor: colors[0] }}
+        />
+        <div
+          className="absolute top-0 -right-4 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"
+          style={{ backgroundColor: colors[1] }}
+        />
+        <div
+          className="absolute -bottom-8 left-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"
+          style={{ backgroundColor: colors[2] }}
+        />
+        <div
+          className="absolute bottom-20 right-20 w-72 h-72 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-6000"
+          style={{ backgroundColor: colors[3] }}
+        />
+      </div>
+
+      {/* Noise overlay for texture */}
+      <div
+        className="absolute inset-0 opacity-50"
+        style={{
+          backgroundImage: \`url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")\`,
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-10">{children}</div>
+
+      <style jsx>{\`
+        @keyframes blob {
+          0% {
+            transform: translate(0px, 0px) scale(1);
+          }
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+          100% {
+            transform: translate(0px, 0px) scale(1);
+          }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+        .animation-delay-6000 {
+          animation-delay: 6s;
+        }
+      \`}</style>
+    </div>
+  );
+}
+
+// Usage Example:
+// <GradientMesh colors={["#ff0080", "#7928ca", "#0070f3", "#00d4ff"]}>
+//   <div className="flex items-center justify-center min-h-screen">
+//     <h1 className="text-6xl font-bold text-white">Beautiful Mesh</h1>
+//   </div>
+// </GradientMesh>`,
+      type: ComponentType.BLOCK,
+      tier: ComponentTier.FREE,
+      category: ComponentCategory.HERO,
+      tags: ['gradient', 'mesh', 'background', 'animated', 'hero', 'visual'],
+      dependencies: JSON.stringify([]),
+      registryDeps: [],
+      status: ComponentStatus.PUBLISHED,
+      featured: true,
+    },
+    {
+      name: 'Tilt Card',
+      slug: 'tilt-card',
+      description: 'A 3D tilt effect card that responds to mouse movement. Creates depth and interactivity with smooth perspective transforms.',
+      code: `"use client";
+
+import { useRef, useState } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+interface TiltCardProps {
+  children: React.ReactNode;
+  className?: string;
+  glareEnabled?: boolean;
+}
+
+export function TiltCard({
+  children,
+  className,
+  glareEnabled = true,
+}: TiltCardProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [hovering, setHovering] = useState(false);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["12deg", "-12deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-12deg", "12deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!ref.current) return;
+
+    const rect = ref.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    setHovering(false);
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+      }}
+      className={cn(
+        "relative rounded-xl border bg-card p-6",
+        className
+      )}
+    >
+      <div
+        style={{ transform: "translateZ(50px)", transformStyle: "preserve-3d" }}
+      >
+        {children}
+      </div>
+
+      {glareEnabled && (
+        <motion.div
+          className="pointer-events-none absolute inset-0 rounded-xl"
+          style={{
+            background: useTransform(
+              [mouseXSpring, mouseYSpring],
+              ([latestX, latestY]) =>
+                \`radial-gradient(
+                  600px circle at \${(Number(latestX) + 0.5) * 100}% \${(Number(latestY) + 0.5) * 100}%,
+                  rgba(255, 255, 255, 0.1),
+                  transparent 40%
+                )\`
+            ),
+          }}
+        />
+      )}
+    </motion.div>
+  );
+}
+
+// Usage Example:
+// <TiltCard className="max-w-sm">
+//   <h3 className="text-xl font-bold mb-2">3D Tilt Effect</h3>
+//   <p className="text-muted-foreground">
+//     Move your mouse over this card to see the 3D tilt effect.
+//   </p>
+// </TiltCard>`,
+      type: ComponentType.ELEMENT,
+      tier: ComponentTier.FREE,
+      category: ComponentCategory.OTHER,
+      tags: ['card', 'tilt', '3d', 'hover', 'interactive', 'perspective'],
+      dependencies: JSON.stringify(['framer-motion']),
+      registryDeps: [],
+      status: ComponentStatus.PUBLISHED,
+      featured: true,
+    },
+    {
+      name: 'Glowing Border',
+      slug: 'glowing-border',
+      description: 'A container with an animated glowing border effect. The glow travels around the border creating a futuristic look.',
+      code: `"use client";
+
+import { cn } from "@/lib/utils";
+
+interface GlowingBorderProps {
+  children: React.ReactNode;
+  className?: string;
+  glowColor?: string;
+  duration?: number;
+}
+
+export function GlowingBorder({
+  children,
+  className,
+  glowColor = "#7c3aed",
+  duration = 3,
+}: GlowingBorderProps) {
+  return (
+    <div className={cn("relative p-[1px] overflow-hidden rounded-xl", className)}>
+      {/* Animated gradient border */}
+      <div
+        className="absolute inset-0 rounded-xl"
+        style={{
+          background: \`linear-gradient(90deg, transparent, \${glowColor}, transparent)\`,
+          animation: \`border-spin \${duration}s linear infinite\`,
+        }}
+      />
+
+      {/* Static gradient for continuous coverage */}
+      <div
+        className="absolute inset-0 rounded-xl opacity-50"
+        style={{
+          background: \`conic-gradient(from 0deg, transparent, \${glowColor}, transparent)\`,
+        }}
+      />
+
+      {/* Content container */}
+      <div className="relative bg-background rounded-xl p-6 z-10">
+        {children}
+      </div>
+
+      <style jsx>{\`
+        @keyframes border-spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      \`}</style>
+    </div>
+  );
+}
+
+// Usage Example:
+// <GlowingBorder glowColor="#7c3aed">
+//   <h3 className="text-xl font-bold mb-2">Glowing Border</h3>
+//   <p className="text-muted-foreground">
+//     A beautiful animated glowing border effect.
+//   </p>
+// </GlowingBorder>`,
+      type: ComponentType.ELEMENT,
+      tier: ComponentTier.FREE,
+      category: ComponentCategory.OTHER,
+      tags: ['border', 'glow', 'animated', 'container', 'visual', 'neon'],
+      dependencies: JSON.stringify([]),
+      registryDeps: [],
+      status: ComponentStatus.PUBLISHED,
+      featured: true,
+    },
+    {
+      name: 'Text Gradient',
+      slug: 'text-gradient',
+      description: 'Animated gradient text that flows through colors. Perfect for headlines and eye-catching typography.',
+      code: `"use client";
+
+import { cn } from "@/lib/utils";
+
+interface TextGradientProps {
+  children: React.ReactNode;
+  className?: string;
+  colors?: string[];
+  animate?: boolean;
+  duration?: number;
+}
+
+export function TextGradient({
+  children,
+  className,
+  colors = ["#ff0080", "#7928ca", "#0070f3", "#ff0080"],
+  animate = true,
+  duration = 5,
+}: TextGradientProps) {
+  const gradientStyle = {
+    backgroundImage: \`linear-gradient(90deg, \${colors.join(", ")})\`,
+    backgroundSize: animate ? "200% auto" : "100% auto",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
+    animation: animate ? \`gradient-shift \${duration}s linear infinite\` : "none",
+  };
+
+  return (
+    <>
+      <span
+        className={cn("inline-block font-bold", className)}
+        style={gradientStyle}
+      >
+        {children}
+      </span>
+      <style jsx>{\`
+        @keyframes gradient-shift {
+          0% {
+            background-position: 0% center;
+          }
+          100% {
+            background-position: 200% center;
+          }
+        }
+      \`}</style>
+    </>
+  );
+}
+
+// Usage Example:
+// <TextGradient className="text-6xl">
+//   Gradient Text
+// </TextGradient>`,
+      type: ComponentType.ELEMENT,
+      tier: ComponentTier.FREE,
+      category: ComponentCategory.OTHER,
+      tags: ['text', 'gradient', 'animated', 'typography', 'headline'],
+      dependencies: JSON.stringify([]),
+      registryDeps: [],
+      status: ComponentStatus.PUBLISHED,
+      featured: true,
+    },
+    {
+      name: 'Particle Field',
+      slug: 'particle-field',
+      description: 'An interactive particle field background with mouse interaction. Particles connect when close to each other.',
+      code: `"use client";
+
+import { useEffect, useRef, useCallback } from "react";
+import { cn } from "@/lib/utils";
+
+interface ParticleFieldProps {
+  children?: React.ReactNode;
+  className?: string;
+  particleCount?: number;
+  particleColor?: string;
+  lineColor?: string;
+  speed?: number;
+}
+
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+}
+
+export function ParticleField({
+  children,
+  className,
+  particleCount = 80,
+  particleColor = "rgba(255, 255, 255, 0.8)",
+  lineColor = "rgba(255, 255, 255, 0.15)",
+  speed = 0.5,
+}: ParticleFieldProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const mouseRef = useRef({ x: 0, y: 0 });
+  const particlesRef = useRef<Particle[]>([]);
+  const animationRef = useRef<number>();
+
+  const initParticles = useCallback((width: number, height: number) => {
+    const particles: Particle[] = [];
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * speed,
+        vy: (Math.random() - 0.5) * speed,
+        size: Math.random() * 2 + 1,
+      });
+    }
+    particlesRef.current = particles;
+  }, [particleCount, speed]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      initParticles(canvas.width, canvas.height);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseRef.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      };
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const particles = particlesRef.current;
+
+      // Update and draw particles
+      particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Bounce off walls
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+        // Draw particle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = particleColor;
+        ctx.fill();
+
+        // Draw lines between nearby particles
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 120) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = 1 - distance / 120;
+            ctx.stroke();
+          }
+        }
+
+        // Mouse interaction
+        const mdx = p.x - mouseRef.current.x;
+        const mdy = p.y - mouseRef.current.y;
+        const mDistance = Math.sqrt(mdx * mdx + mdy * mdy);
+
+        if (mDistance < 100) {
+          const force = (100 - mDistance) / 100;
+          p.vx += (mdx / mDistance) * force * 0.2;
+          p.vy += (mdy / mDistance) * force * 0.2;
+        }
+
+        // Limit velocity
+        const maxSpeed = 2;
+        const currentSpeed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (currentSpeed > maxSpeed) {
+          p.vx = (p.vx / currentSpeed) * maxSpeed;
+          p.vy = (p.vy / currentSpeed) * maxSpeed;
+        }
+      });
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    canvas.addEventListener("mousemove", handleMouseMove);
+    animate();
+
+    return () => {
+      window.removeEventListener("resize", resize);
+      canvas.removeEventListener("mousemove", handleMouseMove);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [initParticles, particleColor, lineColor]);
+
+  return (
+    <div className={cn("relative min-h-screen bg-zinc-950", className)}>
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
+      />
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
+}
+
+// Usage Example:
+// <ParticleField>
+//   <div className="flex items-center justify-center min-h-screen">
+//     <h1 className="text-6xl font-bold text-white">Interactive Particles</h1>
+//   </div>
+// </ParticleField>`,
+      type: ComponentType.BLOCK,
+      tier: ComponentTier.FREE,
+      category: ComponentCategory.HERO,
+      tags: ['particles', 'background', 'interactive', 'canvas', 'hero', 'animation'],
+      dependencies: JSON.stringify([]),
+      registryDeps: [],
+      status: ComponentStatus.PUBLISHED,
+      featured: true,
+    },
     // Additional FREE Components
     {
       name: 'Testimonials Grid',

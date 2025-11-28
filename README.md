@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OonkooUI
 
-## Getting Started
+A React component library and marketplace built on top of [shadcn/ui](https://ui.shadcn.com). OonkooUI provides production-ready, higher-level components like Hero sections, Pricing cards, Feature grids, and more.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **shadcn/ui Foundation** - Built on top of shadcn/ui primitives (Button, Card, Dialog, etc.)
+- **Production-Ready Blocks** - Higher-level components for common UI patterns
+- **Two Installation Methods** - Use shadcn CLI or our dedicated OonkooUI CLI
+- **Free & Pro Tiers** - Free components available to everyone, Pro components for subscribers
+- **Copy & Paste** - Components are added directly to your codebase, fully customizable
+
+## Quick Start
+
+### Using shadcn CLI (Recommended)
+
+1. Add the OonkooUI registry to your `components.json`:
+
+```json
+{
+  "registries": {
+    "@oonkoo": "https://ui.oonkoo.com/r/{name}.json"
+  }
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install components:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npx shadcn@latest add @oonkoo/hero-gradient
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Using OonkooUI CLI
 
-## Learn More
+```bash
+# Initialize OonkooUI in your project
+npx oonkoo init
 
-To learn more about Next.js, take a look at the following resources:
+# Add a component
+npx oonkoo add hero-gradient
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Add multiple components
+npx oonkoo add hero-gradient pricing-cards features-grid
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Authenticate for Pro components
+npx oonkoo auth
+```
 
-## Deploy on Vercel
+## Installation Methods Comparison
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Feature | shadcn CLI | OonkooUI CLI |
+|---------|-----------|--------------|
+| Free components | Yes | Yes |
+| Pro components | No | Yes (with auth) |
+| Interactive picker | No | Yes |
+| Component updates | No | Yes |
+| Setup required | Add registry to components.json | Run `npx oonkoo init` |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Available Components
+
+Visit [ui.oonkoo.com/components](https://ui.oonkoo.com/components) to browse all available components.
+
+### Categories
+
+- **Hero** - Hero sections with various layouts and animations
+- **Pricing** - Pricing tables and comparison cards
+- **Features** - Feature grids, lists, and showcases
+- **CTA** - Call-to-action sections
+- **Testimonials** - Customer testimonial displays
+- **Navigation** - Headers, sidebars, and navigation components
+
+## Requirements
+
+- Node.js 18+
+- React project with Tailwind CSS
+- shadcn/ui initialized (for shadcn CLI method)
+
+## Documentation
+
+- [Components](https://ui.oonkoo.com/components)
+- [Installation Guide](https://ui.oonkoo.com/components/installation)
+- [CLI Documentation](https://ui.oonkoo.com/components/cli)
+
+## CLI Package
+
+The OonkooUI CLI is available as a separate npm package. See [packages/cli](./packages/cli) for more details.
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## Tech Stack
+
+- [Next.js 15](https://nextjs.org) - React framework
+- [Tailwind CSS](https://tailwindcss.com) - Styling
+- [shadcn/ui](https://ui.shadcn.com) - UI primitives
+- [Prisma](https://prisma.io) - Database ORM
+- [Kinde](https://kinde.com) - Authentication
+- [Stripe](https://stripe.com) - Payments
+
+## License
+
+MIT

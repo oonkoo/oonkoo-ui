@@ -1,8 +1,34 @@
 # oonkoo
 
-CLI for installing [OonkooUI](https://oonkoo.dev) components into your React projects.
+CLI for installing [OonkooUI](https://ui.oonkoo.com) components into your React projects.
 
-## Installation
+## Installation Methods
+
+OonkooUI components can be installed using either the **shadcn CLI** or the **OonkooUI CLI**.
+
+### Method 1: shadcn CLI (Recommended for free components)
+
+If you're already using shadcn/ui, you can install OonkooUI components directly:
+
+1. Add the OonkooUI registry to your `components.json`:
+
+```json
+{
+  "registries": {
+    "@oonkoo": "https://ui.oonkoo.com/r/{name}.json"
+  }
+}
+```
+
+2. Install components:
+
+```bash
+npx shadcn@latest add @oonkoo/hero-gradient
+```
+
+### Method 2: OonkooUI CLI (Full access including Pro)
+
+For Pro components and additional features, use our dedicated CLI:
 
 ```bash
 npx oonkoo init
@@ -37,7 +63,7 @@ npx oonkoo auth --api-key
 npx oonkoo auth --logout
 ```
 
-Browser-based login opens your browser for secure authentication via OAuth. API key authentication requires creating a key at [oonkoo.dev/settings/api-keys](https://oonkoo.dev/settings/api-keys).
+Browser-based login opens your browser for secure authentication via OAuth. API key authentication requires creating a key at [ui.oonkoo.com/settings/api-keys](https://ui.oonkoo.com/settings/api-keys).
 
 ### Add components
 
@@ -75,6 +101,16 @@ npx oonkoo update
 npx oonkoo update --all
 ```
 
+## Comparison: shadcn CLI vs OonkooUI CLI
+
+| Feature | shadcn CLI | OonkooUI CLI |
+|---------|-----------|--------------|
+| Free components | Yes | Yes |
+| Pro components | No | Yes (with auth) |
+| Interactive picker | No | Yes |
+| Component updates | No | Yes |
+| Setup | Add registry to components.json | Run `npx oonkoo init` |
+
 ## Configuration
 
 The `oonkoo.config.json` file supports:
@@ -108,8 +144,8 @@ OonkooUI uses [shadcn/ui](https://ui.shadcn.com) as the foundation for base UI p
 
 ## Links
 
-- [Documentation](https://oonkoo.dev/components)
-- [Components](https://oonkoo.dev/components)
+- [Documentation](https://ui.oonkoo.com/components/cli)
+- [Components](https://ui.oonkoo.com/components)
 - [GitHub](https://github.com/oonkoo/oonkoo-ui)
 
 ## License
