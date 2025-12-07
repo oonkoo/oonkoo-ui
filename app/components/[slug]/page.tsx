@@ -81,7 +81,7 @@ export default async function ComponentPage({ params }: ComponentPageProps) {
           {/* Pro Promotion Card (Right side on desktop) */}
           {isPro && !mainFile && (
             <div className="hidden xl:block w-64 shrink-0">
-              <div className="rounded-lg border bg-gradient-to-br from-purple-500/5 to-purple-500/10 p-4">
+              <div className="rounded-lg border bg-linear-to-br from-purple-500/5 to-purple-500/10 p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="h-5 w-5 text-purple-500" />
                   <span className="font-semibold">OonkooUI Pro</span>
@@ -139,6 +139,7 @@ export default async function ComponentPage({ params }: ComponentPageProps) {
           highlightedCode={highlightedCode}
           isPro={isPro && !mainFile}
           previewImage={component.previewImage}
+          controls={component.controls}
         />
       </section>
 
@@ -150,6 +151,7 @@ export default async function ComponentPage({ params }: ComponentPageProps) {
           dependencies={component.dependencies}
           devDependencies={component.devDependencies}
           registryDependencies={component.registryDependencies}
+          cssSetup={component.cssSetup}
           isPro={isPro && !mainFile}
         />
       </section>
@@ -182,7 +184,7 @@ export default async function ComponentPage({ params }: ComponentPageProps) {
       {/* Mobile Pro Card */}
       {isPro && !mainFile && (
         <section className="xl:hidden mb-12">
-          <div className="rounded-lg border bg-gradient-to-br from-purple-500/5 to-purple-500/10 p-6">
+          <div className="rounded-lg border bg-linear-to-br from-purple-500/5 to-purple-500/10 p-6">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="h-5 w-5 text-purple-500" />
               <span className="text-lg font-semibold">Unlock with OonkooUI Pro</span>

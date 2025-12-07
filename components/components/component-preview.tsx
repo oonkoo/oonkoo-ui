@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, Eye, Code2, ExternalLink, Lock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Copy, Check, Eye, Code2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LiveComponentPreview } from "./live-component-preview";
+import { CodeHighlighter } from "./code-highlighter";
+import { CodeVariantSelector } from "./code-variant-selector";
+import { ComponentControls, type ControlConfig } from "./component-controls";
 
 interface ComponentPreviewProps {
   name: string;
@@ -14,6 +16,7 @@ interface ComponentPreviewProps {
   highlightedCode: string;
   isPro: boolean;
   previewImage?: string;
+  controls?: ControlConfig[];
 }
 
 export function ComponentPreview({
@@ -22,8 +25,12 @@ export function ComponentPreview({
   code,
   highlightedCode,
   isPro,
+  controls = [],
 }: ComponentPreviewProps) {
   const [copied, setCopied] = useState(false);
+  const [language, setLanguage] = useState<"js" | "ts">("ts");
+  const [styling, setStyling] = useState<"css" | "tailwind">("tailwind");
+  const [controlValues, setControlValues] = useState<Record<string, any>>({});
 
   const handleCopy = async () => {
     if (isPro && !code) return;
@@ -31,6 +38,9 @@ export function ComponentPreview({
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // Determine file extension based on language
+  const fileExtension = language === "ts" ? "tsx" : "jsx";
 
   return (
     <div className="space-y-4">
@@ -48,6 +58,12 @@ export function ComponentPreview({
           </TabsList>
 
           <div className="flex items-center gap-2">
+            {controls && controls.length > 0 && (
+              <ComponentControls
+                controls={controls}
+                onControlsChange={setControlValues}
+              />
+            )}
             {code && (
               <Button
                 variant="outline"
@@ -73,7 +89,11 @@ export function ComponentPreview({
 
         <TabsContent value="preview" className="mt-4">
           {code ? (
-            <LiveComponentPreview code={code} name={name} />
+            <LiveComponentPreview
+              slug={slug}
+              name={name}
+              controlValues={controlValues}
+            />
           ) : (
             <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-12 text-center">
               <div className="mx-auto w-16 h-16 rounded-full bg-purple-500/10 flex items-center justify-center mb-4">
@@ -92,33 +112,23 @@ export function ComponentPreview({
 
         <TabsContent value="code" className="mt-4">
           {code ? (
-            <div className="relative rounded-xl border border-zinc-800 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-800 bg-zinc-900/50">
-                <span className="text-sm font-medium text-zinc-400">
-                  {slug}.tsx
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleCopy}
-                  className="h-7 gap-1.5"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-3.5 w-3.5 text-green-500" />
-                      Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-3.5 w-3.5" />
-                      Copy
-                    </>
-                  )}
-                </Button>
-              </div>
-              <div
-                className="overflow-auto max-h-[600px] p-4 text-sm bg-[#0d1117]"
-                dangerouslySetInnerHTML={{ __html: highlightedCode }}
+            <div className="space-y-4">
+              <CodeVariantSelector
+                language={language}
+                styling={styling}
+                onLanguageChange={setLanguage}
+                onStylingChange={setStyling}
+                availableVariants={{
+                  languages: ["ts"], // Only TypeScript for now
+                  stylings: ["tailwind"], // Only Tailwind for now
+                }}
+              />
+              <CodeHighlighter
+                code={code}
+                language={fileExtension}
+                filename={`${slug}.${fileExtension}`}
+                maxLines={30}
+                showLineNumbers={true}
               />
             </div>
           ) : (

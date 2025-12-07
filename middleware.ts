@@ -4,7 +4,12 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   // Add security headers
-  response.headers.set("X-Frame-Options", "DENY");
+  // Allow iframe embedding for preview routes
+  if (request.nextUrl.pathname.startsWith("/api/preview")) {
+    response.headers.set("X-Frame-Options", "SAMEORIGIN");
+  } else {
+    response.headers.set("X-Frame-Options", "DENY");
+  }
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(

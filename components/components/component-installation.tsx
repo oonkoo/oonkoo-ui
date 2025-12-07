@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Copy, Check, Terminal, FileCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CodeHighlighter } from "./code-highlighter";
 
 interface ComponentInstallationProps {
   slug: string;
@@ -11,7 +12,25 @@ interface ComponentInstallationProps {
   dependencies?: string[];
   devDependencies?: string[];
   registryDependencies?: string[];
+  cssSetup?: string;
   isPro: boolean;
+}
+
+// Remove Preview wrapper - users only get the actual component
+function stripPreviewCode(code: string): string {
+  // Remove the entire Preview function (export default function Preview...)
+  let cleaned = code.replace(/\/\/\s*Preview wrapper.*?\n/g, "");
+  cleaned = cleaned.replace(/export\s+default\s+function\s+Preview\s*\([^)]*\)\s*{[\s\S]*$/m, "");
+
+  // If there's a simpler pattern, match the last export default function
+  const lines = cleaned.split("\n");
+  const lastExportIndex = lines.findIndex(line => /export\s+default\s+function\s+Preview/.test(line));
+
+  if (lastExportIndex !== -1) {
+    cleaned = lines.slice(0, lastExportIndex).join("\n");
+  }
+
+  return cleaned.trim();
 }
 
 export function ComponentInstallation({
@@ -20,11 +39,15 @@ export function ComponentInstallation({
   dependencies = [],
   devDependencies = [],
   registryDependencies = [],
+  cssSetup,
   isPro,
 }: ComponentInstallationProps) {
   const [copiedCli, setCopiedCli] = useState(false);
   const [copiedManual, setCopiedManual] = useState(false);
   const [copiedDeps, setCopiedDeps] = useState(false);
+
+  // Strip Preview code - only show the actual component
+  const cleanedCode = useMemo(() => stripPreviewCode(code), [code]);
 
   const cliCommand = `npx oonkoo add ${slug}`;
   const depsCommand = dependencies.length > 0 ? `npm install ${dependencies.join(" ")}` : "";
@@ -37,7 +60,7 @@ export function ComponentInstallation({
 
   const handleCopyManual = async () => {
     if (isPro && !code) return;
-    await navigator.clipboard.writeText(code);
+    await navigator.clipboard.writeText(cleanedCode);
     setCopiedManual(true);
     setTimeout(() => setCopiedManual(false), 2000);
   };
@@ -124,34 +147,13 @@ export function ComponentInstallation({
                     components/oonkoo/{slug}.tsx
                   </code>
                 </p>
-                <div className="relative rounded-lg border overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/50">
-                    <span className="text-sm font-mono text-muted-foreground">
-                      {slug}.tsx
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleCopyManual}
-                      className="h-7 gap-1.5"
-                    >
-                      {copiedManual ? (
-                        <>
-                          <Check className="h-3.5 w-3.5 text-green-500" />
-                          Copied
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="h-3.5 w-3.5" />
-                          Copy
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                  <pre className="overflow-auto max-h-[400px] p-4 text-sm bg-[#0d1117]">
-                    <code className="text-gray-300">{code}</code>
-                  </pre>
-                </div>
+                <CodeHighlighter
+                  code={cleanedCode}
+                  language="tsx"
+                  filename={`${slug}.tsx`}
+                  maxLines={25}
+                  showLineNumbers={true}
+                />
               </div>
             ) : (
               <div className="rounded-lg border bg-card p-8 text-center">
@@ -206,6 +208,22 @@ export function ComponentInstallation({
               </a>
             ))}
           </div>
+        </div>
+      )}
+
+      {cssSetup && (
+        <div>
+          <h3 className="font-medium mb-3">Additional CSS Setup</h3>
+          <p className="text-sm text-muted-foreground mb-3">
+            This component requires additional CSS. Add the following to your <code className="bg-muted px-1.5 py-0.5 rounded text-xs">globals.css</code> file:
+          </p>
+          <CodeHighlighter
+            code={cssSetup}
+            language="css"
+            filename="globals.css"
+            maxLines={20}
+            showLineNumbers={false}
+          />
         </div>
       )}
     </div>

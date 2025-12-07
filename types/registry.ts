@@ -1,5 +1,16 @@
 // Registry Schema Types - Compatible with shadcn/ui CLI patterns
 
+export interface ControlConfig {
+  name: string;
+  label: string;
+  type: "number" | "color" | "text" | "select" | "range";
+  defaultValue: string | number;
+  min?: number;
+  max?: number;
+  step?: number;
+  options?: string[];
+}
+
 export interface RegistryComponent {
   name: string;
   slug: string;
@@ -19,9 +30,13 @@ export interface RegistryComponent {
   devDependencies?: string[];
   // Other oonkoo components required
   registryDependencies?: string[];
+  // Additional CSS setup instructions
+  cssSetup?: string;
   // Preview
   previewUrl?: string;
   previewImage?: string;
+  // Interactive controls for live preview
+  controls?: ControlConfig[];
   // Stats
   downloads: number;
   upvotes: number;
@@ -57,6 +72,7 @@ export interface RegistryIndexItem {
   upvotes: number;
   price?: number;
   previewImage?: string;
+  badge?: "default" | "new" | "updated";
   author: {
     id: string;
     name: string;

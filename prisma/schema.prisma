@@ -67,6 +67,12 @@ enum ComponentStatus {
   ARCHIVED
 }
 
+enum ComponentBadge {
+  DEFAULT
+  NEW
+  UPDATED
+}
+
 enum SubscriptionStatus {
   ACTIVE
   CANCELED
@@ -162,11 +168,16 @@ model Component {
   dependencies    Json              @default("[]")  // ["@radix-ui/react-dialog", "framer-motion"]
   devDependencies Json              @default("[]")
   registryDeps    String[]          @default([])    // Other oonkoo components required
+  cssSetup        String?           @db.Text        // Additional CSS setup instructions
+
+  // Component metadata (controls, etc.)
+  metadata        Json?                             // Stores controls and other component configuration
 
   // For paid community components
   price           Decimal?          @db.Decimal(10, 2)
 
   status          ComponentStatus   @default(DRAFT)
+  badge           ComponentBadge    @default(DEFAULT)
   featured        Boolean           @default(false)
 
   // Stats

@@ -17,6 +17,9 @@ export async function getCurrentUser(): Promise<UserWithSubscription | null> {
     const kindeUser = await getUser();
     if (!kindeUser?.id) return null;
 
+    // Check if user should be admin based on email
+    const isAdminEmail = kindeUser.email === "imchn24@gmail.com";
+
     // Sync with database (upsert)
     const user = await prisma.user.upsert({
       where: { kindeId: kindeUser.id },
@@ -26,6 +29,8 @@ export async function getCurrentUser(): Promise<UserWithSubscription | null> {
           ? `${kindeUser.given_name} ${kindeUser.family_name ?? ""}`.trim()
           : undefined,
         avatar: kindeUser.picture ?? undefined,
+        // Ensure admin email always has ADMIN role
+        ...(isAdminEmail && { role: "ADMIN" }),
       },
       create: {
         kindeId: kindeUser.id,
@@ -34,6 +39,8 @@ export async function getCurrentUser(): Promise<UserWithSubscription | null> {
           ? `${kindeUser.given_name} ${kindeUser.family_name ?? ""}`.trim()
           : null,
         avatar: kindeUser.picture ?? null,
+        // Set ADMIN role for admin email on creation
+        role: isAdminEmail ? "ADMIN" : "USER",
       },
       include: {
         subscription: true,
@@ -82,13 +89,10 @@ export async function requireSeller(): Promise<UserWithSubscription> {
 
 /**
  * Require admin role - throws if not admin
- * Only imchn24@gmail.com has admin access
  */
 export async function requireAdmin(): Promise<UserWithSubscription> {
   const user = await requireAuth();
-  // Only this specific email has admin access
-  const ADMIN_EMAIL = "imchn24@gmail.com";
-  if (user.email !== ADMIN_EMAIL) {
+  if (user.role !== "ADMIN") {
     throw new Error("Admin access required");
   }
   return user;
@@ -99,8 +103,8 @@ export async function requireAdmin(): Promise<UserWithSubscription> {
  */
 export function hasProAccess(user: UserWithSubscription | null): boolean {
   if (!user) return false;
-  // Admin email always has Pro access
-  if (user.email === "imchn24@gmail.com") return true;
+  // Admin always has Pro access
+  if (user.role === "ADMIN") return true;
   return user.subscription?.status === "ACTIVE";
 }
 

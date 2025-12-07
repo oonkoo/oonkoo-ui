@@ -1,5 +1,5 @@
-import { Suspense } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Blocks, Download, Heart, TrendingUp } from "lucide-react";
 
 import { getCurrentUser } from "@/lib/kinde";
@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+const ADMIN_EMAIL = "imchn24@gmail.com";
 
 export const metadata = {
   title: "Dashboard",
@@ -18,6 +20,11 @@ export default async function DashboardPage() {
 
   if (!user) {
     return null;
+  }
+
+  // Redirect admin users to admin dashboard
+  if (user.email === ADMIN_EMAIL) {
+    redirect("/admin");
   }
 
   const isPro = user.subscription?.status === "ACTIVE";

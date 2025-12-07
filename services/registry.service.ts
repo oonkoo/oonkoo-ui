@@ -95,6 +95,7 @@ export class RegistryService {
           upvoteCount: true,
           price: true,
           previewImage: true,
+          badge: true,
           author: {
             select: {
               id: true,
@@ -117,6 +118,7 @@ export class RegistryService {
       downloads: c.downloads,
       upvotes: c.upvoteCount,
       price: c.price ? Number(c.price) : undefined,
+      badge: c.badge.toLowerCase() as RegistryIndexItem["badge"],
       previewImage: c.previewImage ?? undefined,
       author: {
         id: c.author.id,
@@ -184,6 +186,21 @@ export class RegistryService {
       }
     }
 
+    // Parse controls from metadata
+    let parsedControls: RegistryComponent["controls"] = undefined;
+    if (component.metadata) {
+      try {
+        const metadata = typeof component.metadata === "string"
+          ? JSON.parse(component.metadata)
+          : component.metadata;
+        if (metadata && metadata.controls) {
+          parsedControls = metadata.controls;
+        }
+      } catch {
+        parsedControls = undefined;
+      }
+    }
+
     return {
       name: component.name,
       slug: component.slug,
@@ -210,8 +227,10 @@ export class RegistryService {
       dependencies: parsedDeps,
       devDependencies: parsedDevDeps,
       registryDependencies: component.registryDeps,
+      cssSetup: component.cssSetup ?? undefined,
       previewUrl: component.previewUrl ?? undefined,
       previewImage: component.previewImage ?? undefined,
+      controls: parsedControls,
       downloads: component.downloads,
       upvotes: component.upvoteCount,
       price: component.price ? Number(component.price) : undefined,
@@ -240,9 +259,9 @@ export class RegistryService {
     // Check if user is admin (always has access)
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { email: true },
+      select: { role: true },
     });
-    if (user?.email === "imchn24@gmail.com") {
+    if (user?.role === "ADMIN") {
       return true;
     }
 

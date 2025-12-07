@@ -27,14 +27,22 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { cn } from "@/lib/utils";
 import { mainNav } from "@/config/navigation";
 
-export function Header() {
+interface HeaderProps {
+  fullWidth?: boolean;
+  children?: React.ReactNode;
+}
+
+export function Header({ fullWidth = false, children }: HeaderProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { user, isAuthenticated, isLoading } = useKindeBrowserClient();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-md dark:bg-card dark:border-white/10">
-      <div className="container flex h-16 items-center justify-between">
+      <div className={cn(
+        "flex h-16 items-center justify-between",
+        fullWidth ? "px-4 md:px-6" : "container"
+      )}>
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Image
@@ -81,6 +89,7 @@ export function Header() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
+          {children}
           <ThemeToggle />
           {isLoading ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
